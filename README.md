@@ -44,8 +44,14 @@ The JSON vault is the durable source of truth. SQLite is only a local cache so t
 
 #### JSON vault
 
-The vault is cloned from `https://github.com/minshwehinthar/JetanaMemoryVault.git` into
-`backend/storage/app/vault`. MLCA data lives under `mlca/`:
+Clone the vault into `backend/storage/app/vault`:
+
+```bash
+cd backend
+git clone https://github.com/minshwehinthar/JetanaMemoryVault.git storage/app/vault
+```
+
+MLCA data lives under `mlca/`:
 
 - `mlca/data/mlca.json` — public content, settings, members, roles and permissions
 - `mlca/media/` — uploaded images, videos and documents

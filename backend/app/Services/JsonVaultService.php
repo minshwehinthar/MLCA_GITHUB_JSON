@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Process;
 use Illuminate\Support\Facades\Schema;
-use Throwable;
 
 class JsonVaultService
 {
@@ -191,7 +190,7 @@ class JsonVaultService
 
         File::ensureDirectoryExists($destination);
 
-        $result = Process::timeout(300)->run(['rsync', '-a', rtrim($source, '/').'/', rtrim($destination, '/').'/']);
+        $result = Process::timeout(300)->run(['rsync', '-a', '--delete', rtrim($source, '/').'/', rtrim($destination, '/').'/']);
         if (! $result->successful()) {
             File::copyDirectory($source, $destination);
         }
