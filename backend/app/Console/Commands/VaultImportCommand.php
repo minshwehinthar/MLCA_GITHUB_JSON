@@ -17,12 +17,13 @@ class VaultImportCommand extends Command
             return self::FAILURE;
         }
 
-        $imported = $vault->import();
+        $result = $vault->import();
 
         $this->info('Vault import complete.');
-        foreach ($imported as $table => $count) {
+        foreach ($result['tables'] as $table => $count) {
             $this->line(sprintf('  %-24s %d rows', $table, $count));
         }
+        $this->line(sprintf('  %-24s %d files', 'media', $result['media_files']));
 
         return self::SUCCESS;
     }

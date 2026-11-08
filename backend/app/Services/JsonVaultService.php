@@ -85,7 +85,7 @@ class JsonVaultService
             Schema::enableForeignKeyConstraints();
         }
 
-        return $imported;
+        return ['tables' => $imported, 'media_files' => $this->restoreMedia()];
     }
 
     public function commit(bool $push = true): array
@@ -177,6 +177,25 @@ class JsonVaultService
     {
         File::ensureDirectoryExists(dirname($path));
         File::put($path, json_encode($payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR));
+    }
+
+    protected function restoreMedia(): int
+    {
+        $source = rtrim(config('vault.repo_path'), '/').'/'.config('vault.media_dir');
+        $destination = config('vault.media_source');
+
+        if (! File::isDirectory($source)) {
+            return 0;
+        }
+
+        File::ensureDirectoryExists($destination);
+
+        $result = Process::timeout(300)->run(['rsync', '-a', rtrim($source, '/').'/', rtrim($destination, '/').'/']);
+        if (! $result->successful()) {
+            File::copyDirectory($source, $destination);
+        }
+
+        return count(File::allFiles($source));
     }
 
     protected function syncMedia(): int
