@@ -9,14 +9,15 @@ It includes a public, multilingual website (English, Myanmar, Mon) and a multi-u
 | Layer | Technology |
 | --- | --- |
 | Frontend | Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4, Radix UI, sonner |
-| Backend | Laravel 13, Sanctum, MySQL |
+| Backend | Laravel 13, Sanctum, SQLite local cache |
+| Data storage | JSON vault committed to GitHub |
 | Auth | Bearer tokens (localStorage) with role/permission middleware |
 
 ## Requirements
 
 - Node.js 20+ and npm
 - PHP 8.3+, Composer
-- MySQL 8+
+- SQLite (bundled with PHP)
 
 ## Quick start
 
@@ -29,13 +30,40 @@ cp .env.example .env
 php artisan key:generate
 ```
 
-Set the database credentials in `.env` (defaults use database `mlca`), then:
+Create the local SQLite cache and import the JSON vault:
 
 ```bash
-php artisan migrate --seed
+touch database/database.sqlite
+php artisan migrate
+php artisan vault:import --force
 php artisan storage:link
 php artisan serve --host=127.0.0.1 --port=8000
 ```
+
+The JSON vault is the durable source of truth. SQLite is only a local cache so the existing admin authentication, permissions and query code keep working without MySQL.
+
+#### JSON vault
+
+The vault is cloned from `https://github.com/minshwehinthar/JetanaMemoryVault.git` into
+`backend/storage/app/vault`. MLCA data lives under `mlca/`:
+
+- `mlca/data/mlca.json` — public content, settings, members, roles and permissions
+- `mlca/media/` — uploaded images, videos and documents
+
+Every admin create/update/delete and upload triggers an automatic JSON export, media sync,
+git commit and push. Users, password hashes, tokens, contact messages and activity logs stay
+in the local private vault file and are not committed to the public repository.
+
+Useful commands:
+
+```bash
+php artisan vault:status
+php artisan vault:export
+php artisan vault:export --push
+php artisan vault:import --force
+```
+
+Set `VAULT_INCLUDE_PRIVATE=true` only if the vault repository is private.
 
 The API is served at `http://127.0.0.1:8000/api`.
 
