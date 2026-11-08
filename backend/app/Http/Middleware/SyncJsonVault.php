@@ -18,7 +18,15 @@ class SyncJsonVault
 
     public function terminate(Request $request, Response $response): void
     {
-        if (! config('vault.auto_sync') || app()->runningUnitTests() || $request->isMethod('GET')) {
+        if (! config('vault.auto_sync') || app()->runningUnitTests()) {
+            return;
+        }
+
+        if (! in_array($request->method(), ['POST', 'PUT', 'PATCH', 'DELETE'], true)) {
+            return;
+        }
+
+        if ($response->getStatusCode() >= 400) {
             return;
         }
 
