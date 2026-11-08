@@ -1,0 +1,47 @@
+<?php
+
+return [
+    'auto_sync' => env('VAULT_AUTO_SYNC', true),
+    'repo_path' => env('VAULT_REPO_PATH', storage_path('app/vault')),
+    'remote' => env('VAULT_REMOTE', 'origin'),
+    'branch' => env('VAULT_BRANCH', 'main'),
+    'public_file' => env('VAULT_PUBLIC_FILE', 'mlca/data/mlca.json'),
+    'private_file' => env('VAULT_PRIVATE_FILE', storage_path('app/vault-private.json')),
+    'media_source' => storage_path('app/public/uploads'),
+    'media_dir' => env('VAULT_MEDIA_DIR', 'mlca/media'),
+    'include_private' => env('VAULT_INCLUDE_PRIVATE', false),
+
+    'public_tables' => [
+        'website_settings',
+        'navigation_items',
+        'pages',
+        'page_translations',
+        'categories',
+        'posts',
+        'post_translations',
+        'media',
+        'activities',
+        'activity_translations',
+        'events',
+        'event_translations',
+        'gallery_albums',
+        'gallery_images',
+        'videos',
+        'documents',
+        'members',
+        'member_translations',
+        'achievements',
+        'roles',
+        'permissions',
+        'permission_role',
+        'role_user',
+    ],
+
+    'private_tables' => [
+        'users',
+        'personal_access_tokens',
+        'password_reset_tokens',
+        'contact_messages',
+        'activity_logs',
+    ],
+];
